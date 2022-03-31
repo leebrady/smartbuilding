@@ -18,7 +18,18 @@ message GreetResponse{
   string result = 1;
 }
 
+message tempCheckRequest{
+  Greeting greeting = 1;
+}
+
+message tempCheckResponse{
+  string result = 1;
+}
+
 service GreetService{
-  //unary API
+  // unary API
   rpc visitorCheck(GreetRequest) returns (GreetResponse) {};
+
+  // server streaming API
+  rpc tempCheck(tempCheckRequest) returns (stream tempCheckResponse) {};
 }
