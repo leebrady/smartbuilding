@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'com.lee'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtimeOnly 'io.grpc:grpc-netty-shaded:1.45.1'
+    implementation 'io.grpc:grpc-protobuf:1.45.1'
+    implementation 'io.grpc:grpc-stub:1.45.1'
+}
+
+test {
+    useJUnitPlatform()
+}
