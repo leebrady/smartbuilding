@@ -2,6 +2,7 @@ package com.lee.grpc.greeting.server;
 
 import com.proto.greet.*;
 import io.grpc.stub.StreamObserver;
+import java.util.Random;
 
 public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
     @Override
@@ -26,10 +27,8 @@ public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
     @Override
     public void tempCheck(tempCheckRequest request, StreamObserver<tempCheckResponse> responseObserver) {
             String firstName = request.getGreeting().getFirstName();
-            String lastName = request.getGreeting().getLastName();
-
             for (int i =0; i < 10; i++){
-                String result = (firstName + " " + lastName + " here is the response number: " + i);
+                String result = ("Your ticket number is: " + i + ". We will contact you soon with a response");
                 tempCheckResponse response = tempCheckResponse.newBuilder()
                         .setResult(result)
                         .build();
@@ -54,7 +53,7 @@ public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
             @Override
             public void onNext(occupancyCheckRequest value) {
                 // client sends message
-                result += ". Hello " + value.getGreeting().getFirstName() + "! ";
+                result += "Number of people in lobby is okay.";
             }
 
             @Override

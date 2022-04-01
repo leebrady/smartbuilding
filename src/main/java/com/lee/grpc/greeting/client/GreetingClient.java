@@ -11,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 public class GreetingClient {
 
-     String firstName = JOptionPane.showInputDialog("What is your first name?");
-     String lastName = JOptionPane.showInputDialog("What is your last name?");
 
     public static void main(String[] args) {
         System.out.println("I am a gRPC Client!");
@@ -28,13 +26,13 @@ public class GreetingClient {
 
         // switch to enable which service is being called
 
-        //doUnaryCall(channel);
+        doUnaryCall(channel);
 
         //doServerStreamingCall(channel);
 
         //doClientStreamingCall(channel);
 
-        doBidirectionalStreamingCall(channel);
+        //doBidirectionalStreamingCall(channel);
 
 
         System.out.println("shutting down channel");
@@ -47,6 +45,8 @@ public class GreetingClient {
         GreetServiceGrpc.GreetServiceBlockingStub greetClient = GreetServiceGrpc.newBlockingStub(channel);
 
         System.out.println("creating stub");
+        String firstName = JOptionPane.showInputDialog("What is your first name?");
+        String lastName = JOptionPane.showInputDialog("What is your last name?");
 
         // Unary
         // protocol buffer greeting message
@@ -73,8 +73,6 @@ public class GreetingClient {
         // Server Streaming
         // prepare request
         tempCheckRequest tempCheckRequest = com.proto.greet.tempCheckRequest.newBuilder()
-                .setGreeting(Greeting.newBuilder().setFirstName(firstName))
-                .setGreeting(Greeting.newBuilder().setLastName(lastName))
                 .build();
         // stream responses
         greetClient.tempCheck(tempCheckRequest)
@@ -116,26 +114,23 @@ public class GreetingClient {
         });
 
         // streaming message #1
-        System.out.println("sending message 1");
+        System.out.println("Current amount of people in lobby is (3)");
          requestObserver.onNext(occupancyCheckRequest.newBuilder()
                  .setGreeting(Greeting.newBuilder()
-                         .setFirstName(firstName)
                          .build())
                  .build());
 
         // streaming message #2
-        System.out.println("sending message 2");
+        System.out.println("Current amount of people in lobby is (2)");
         requestObserver.onNext(occupancyCheckRequest.newBuilder()
                 .setGreeting(Greeting.newBuilder()
-                        .setFirstName(firstName)
                         .build())
                 .build());
 
         // streaming message #3
-        System.out.println("sending message 3");
+        System.out.println("Current amount of people in lobby is (4)");
         requestObserver.onNext(occupancyCheckRequest.newBuilder()
                 .setGreeting(Greeting.newBuilder()
-                        .setFirstName(firstName)
                         .build())
                 .build());
 
