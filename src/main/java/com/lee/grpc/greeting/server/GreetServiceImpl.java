@@ -3,8 +3,6 @@ package com.lee.grpc.greeting.server;
 import com.proto.greet.*;
 import io.grpc.stub.StreamObserver;
 
-import java.io.StringReader;
-
 public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
     @Override
     public void visitorCheck(GreetRequest request, StreamObserver<GreetResponse> responseObserver) {
@@ -45,5 +43,39 @@ public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
                 }
             }
             responseObserver.onCompleted();
+    }
+
+    @Override
+    public StreamObserver<occupancyCheckRequest> occupancyCheck(StreamObserver<occupancyCheckResponse> responseObserver) {
+        StreamObserver<occupancyCheckRequest> requestObserver = new StreamObserver<occupancyCheckRequest>() {
+
+            String result = "";
+
+            @Override
+            public void onNext(occupancyCheckRequest value) {
+                // client sends message
+                result += ". Hello " + value.getGreeting().getFirstName() + "! ";
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                // client sends error
+                System.out.println("Error");
+            }
+
+            @Override
+            public void onCompleted() {
+                // client is finished
+                responseObserver.onNext(
+                        occupancyCheckResponse.newBuilder()
+                                .setResult(result)
+                                .build()
+                );
+                responseObserver.onCompleted();
+                // response is returned with responseObserver
+            }
+        };
+
+        return requestObserver;
     }
 }
