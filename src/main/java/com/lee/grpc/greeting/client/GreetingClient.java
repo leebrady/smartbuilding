@@ -5,6 +5,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -26,9 +27,14 @@ public class GreetingClient {
                 .build();
 
         // switch to enable which service is being called
+
         //doUnaryCall(channel);
+
         //doServerStreamingCall(channel);
-        doClientStreamingCall(channel);
+
+        //doClientStreamingCall(channel);
+
+        doBidirectionalStreamingCall(channel);
 
 
         System.out.println("shutting down channel");
@@ -138,6 +144,49 @@ public class GreetingClient {
 
         try {
             latch.await(10L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void doBidirectionalStreamingCall(ManagedChannel channel){
+        //asynchronous client
+        GreetServiceGrpc.GreetServiceStub asyncClient = GreetServiceGrpc.newStub(channel);
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        StreamObserver<elevatorStatusRequest> requestObserver = asyncClient.elevatorStatus(new StreamObserver<elevatorStatusResponse>() {
+            @Override
+            public void onNext(elevatorStatusResponse value) {
+                System.out.println("Response from server: " + value.getResult());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Server is finished sending something ");
+                latch.countDown();
+            }
+        });
+
+        Arrays.asList("Elevator okay","Elevator okay","Elevator okay","Elevator okay","Elevator okay").forEach(
+                elevatorCondition -> {
+                    System.out.println("Sending: " + elevatorCondition);
+                    requestObserver.onNext(elevatorStatusRequest.newBuilder()
+                            .setGreeting(Greeting.newBuilder()
+                                    .setFirstName(elevatorCondition))
+                            .build());
+                }
+        );
+
+        requestObserver.onCompleted();
+
+        try {
+            latch.await(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

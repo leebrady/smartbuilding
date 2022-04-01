@@ -78,4 +78,31 @@ public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
 
         return requestObserver;
     }
+
+    @Override
+    public StreamObserver<elevatorStatusRequest> elevatorStatus(StreamObserver<elevatorStatusResponse> responseObserver) {
+        StreamObserver<elevatorStatusRequest> requestObserver =
+                new StreamObserver<elevatorStatusRequest>() {
+                    @Override
+                    public void onNext(elevatorStatusRequest value) {
+                        String result = "The current status is: " + value.getGreeting().getFirstName();
+                        elevatorStatusResponse elevatorStatusResponse = com.proto.greet.elevatorStatusResponse.newBuilder()
+                                .setResult(result)
+                                .build();
+
+                        responseObserver.onNext(elevatorStatusResponse);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        System.out.println("Error");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        responseObserver.onCompleted();
+                    }
+                };
+        return requestObserver;
+    }
 }
